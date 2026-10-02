@@ -44,7 +44,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+uint8_t rx_msg[4];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -91,7 +91,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   uint8_t tx_msg[] = "RoboMaster 2027\r\n";
   /* USER CODE END 2 */
-
+  HAL_UART_Receive_IT(&huart1, rx_msg, 1);
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -146,7 +146,18 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  if (huart == &huart1) {
+			if (rx_msg[0] == 'R') {
+      HAL_GPIO_WritePin(LED_B_GPIO_Port, LED_B_Pin, GPIO_PIN_RESET); // 亮灯
+    } else if (rx_msg[0] == 'M') {
+      HAL_GPIO_WritePin(LED_B_GPIO_Port, LED_B_Pin, GPIO_PIN_SET);   // 灭灯
+    }
+    // 【极其重要】重新开启中断接收，否则只能收一次
+    HAL_UART_Receive_IT(&huart1, rx_msg, 1);
+  }
+}
 /* USER CODE END 4 */
 
 /**
