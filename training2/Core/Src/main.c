@@ -92,7 +92,7 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   //uint8_t tx_msg[] = "RoboMaster 2027\r\n";
-  HAL_UART_Receive_IT(&huart1, rx_msg, 1);
+  HAL_UART_Receive_DMA(&huart1, rx_msg, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -158,7 +158,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
       HAL_GPIO_WritePin(LED_B_GPIO_Port, LED_B_Pin, GPIO_PIN_SET);   // 灭灯
     }
     // 【极其重要】重新开启中断接收，否则只能收一次
-    HAL_UART_Receive_IT(&huart1, rx_msg, 1);
+    HAL_UART_Receive_DMA(&huart1, rx_msg, 1);
   }
 }
 /* USER CODE END 4 */
