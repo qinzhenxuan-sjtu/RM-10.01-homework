@@ -93,7 +93,7 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   //uint8_t tx_msg[] = "RoboMaster 2027\r\n";
-  HAL_UART_Receive_DMA(&huart1, rx_msg, 10);
+  HAL_UARTEx_ReceiveToIdle_DMA(&huart1, rx_msg, 10);
 	HAL_GPIO_WritePin(LED_B_GPIO_Port, LED_B_Pin, GPIO_PIN_SET); // 亮灯
   /* USER CODE END 2 */
 
@@ -155,17 +155,16 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
   if (huart == &huart1) {
-    // 把接收到的数据拷贝到发送缓冲区
-    for (uint8_t i = 0; i < 10; i++) {
-      tx_msg[i] = rx_msg[i];
-    }
-    // 转发回上位机
-    HAL_UART_Transmit_DMA(&huart1, tx_msg, 10);
-    // 重新开启接收
-    HAL_UART_Receive_DMA(&huart1, rx_msg, 10);
+    if ((huart->RxEventType==HAL_UART_RXEVENT_IDLE) ||
+        (huart->RxEventType==HAL_UART_RXEVENT_TC)) {
+
+      HAL_UART_Transmit_IT(&huart1, rx_msg, Size);
+
+      HAL_UARTEx_ReceiveToIdle_DMA(&huart1, rx_msg, 10);
+        }
   }
 }
 /* USER CODE END 4 */
