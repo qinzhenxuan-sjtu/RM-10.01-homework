@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -87,16 +88,18 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  uint8_t tx_msg[] = "RoboMaster 2027\r\n";
-  /* USER CODE END 2 */
+  //uint8_t tx_msg[] = "RoboMaster 2027\r\n";
   HAL_UART_Receive_IT(&huart1, rx_msg, 1);
+  /* USER CODE END 2 */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    HAL_UART_Transmit(&huart1, tx_msg, sizeof(tx_msg), 1000);
+    //HAL_UART_Transmit(&huart1, tx_msg, sizeof(tx_msg), 1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
